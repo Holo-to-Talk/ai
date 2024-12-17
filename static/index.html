@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Holo >> Talk スタッフ着信画面</title>
+    <!-- Materialize CSS -->
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css"
+      rel="stylesheet"
+    />
+    <!-- カスタムCSS -->
+    <link rel="stylesheet" href="./static/site.css" />
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./static/header.css" />
+  </head>
+  <body>
+    <!-- ヘッダー -->
+    <nav class="black">
+      <div class="nav-wrapper">
+        <!-- メニューアイコン -->
+        <a href="#" data-target="slide-out" class="sidenav-trigger">
+          <i class="material-icons">menu</i>
+        </a>
+        <!-- ロゴ -->
+        <a href="#" class="brand-logo">
+          <img
+            src="./static/logo.png"
+            alt="Logo"
+            style="height: 50px; margin-top: 5px"
+          />
+        </a>
+      </div>
+    </nav>
+
+    <!-- サイドナビゲーション -->
+    <ul id="slide-out" class="sidenav black">
+      <li><a href="/report/register" class="white-text">ログ入力</a></li>
+      <li><a href="/report/list" class="white-text">ログ一覧</a></li>
+      <li><a href="/station/list" class="white-text">駅新規登録</a></li>
+    </ul>
+
+    <!-- メインコンテンツ -->
+    <header>
+      <h1 class="center-align">着信画面</h1>
+      <div class="center-align">
+        <button id="startup-button" class="btn">デバイスを起動</button>
+      </div>
+    </header>
+
+    <main id="controls">
+      <section class="left-column" id="info">
+        <h2>端末情報</h2>
+        <div id="client-name"></div>
+        <div id="output-selection" class="hide">
+          <label>着信音先</label>
+          <select id="ringtone-devices" multiple class="browser-default"></select>
+          <label>スピーカー先</label>
+          <select id="speaker-devices" multiple class="browser-default"></select>
+          <br />
+          <button id="get-devices" class="btn">音声デバイス更新</button>
+        </div>
+      </section>
+
+      <section class="center-column">
+        <h2 class="instructions">発信・着信画面</h2>
+        <div id="call-controls" class="hide">
+          <form>
+            <label for="phone-number">発信先の電話番号を入力してください。</label>
+            <input
+              id="phone-number"
+              type="text"
+              placeholder="+15552221234"
+              class="validate"
+            />
+            <button id="button-call" type="submit" class="btn">発信</button>
+          </form>
+          <button id="button-hangup-outgoing" class="btn hide">電話を終了</button>
+          <div id="incoming-call" class="hide">
+            <h2>Incoming Call Controls</h2>
+            <p class="instructions">着信あり<span id="incoming-number"></span></p>
+            <button id="button-accept-incoming" class="btn green">応答</button>
+            <button id="button-reject-incoming" class="btn red">拒否</button>
+            <button id="button-hangup-incoming" class="btn hide">電話を終了</button>
+          </div>
+          <div id="volume-indicators" class="hide">
+            <label>マイクボリューム</label>
+            <div id="input-volume"></div>
+            <br /><br />
+            <label>スピーカーボリューム</label>
+            <div id="output-volume"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="right-column">
+        <h2>イベントログ</h2>
+        <div class="hide" id="log"></div>
+      </section>
+    </main>
+
+    <!-- Materialize JS -->
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script type="text/javascript" src="static/twilio.min.js"></script>
+    <script src="static/quickstart.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        var elems = document.querySelectorAll(".sidenav");
+        M.Sidenav.init(elems, {
+          edge: "left",
+          draggable: false, // ドラッグで開閉できないように設定
+        });
+
+        // 音声デバイス更新ボタンのクリックイベント
+        document.getElementById("get-devices").addEventListener("click", function () {
+          // ダミーのデバイス情報を生成（実際はTwilioなどで取得する）
+          const ringtoneDevices = ['Device 1', 'Device 2', 'Device 3'];
+          const speakerDevices = ['Speaker 1', 'Speaker 2', 'Speaker 3'];
+
+          // 着信音デバイスのselect要素にデバイスを追加
+          populateDevices(document.getElementById('ringtone-devices'), ringtoneDevices);
+          // スピーカーデバイスのselect要素にデバイスを追加
+          populateDevices(document.getElementById('speaker-devices'), speakerDevices);
+        });
+
+        // セレクトボックスにデバイス追加する関数
+        function populateDevices(selectElement, devices) {
+          selectElement.innerHTML = ""; // 既存の内容をクリア
+          devices.forEach((device) => {
+            const option = document.createElement("option");
+            option.textContent = device;
+            option.value = device;
+            selectElement.appendChild(option);
+          });
+
+          // Materializeの初期化
+          M.FormSelect.init(selectElement);
+        }
+      });
+    </script>
+  </body>
+</html>

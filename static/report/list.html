@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ログ一覧</title>
+
+    <!-- Google Material Icons -->
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet"
+    />
+    <!-- Materialize CSS -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css"
+    />
+    <!-- Google Fonts Noto Sans JP -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../static/report/list.css" />
+    <link rel="stylesheet" href="../static/header.css" />
+  </head>
+  <body>
+    <!-- ヘッダー -->
+    <nav class="black">
+      <div class="nav-wrapper">
+        <!-- メニューアイコン -->
+        <a href="#" data-target="slide-out" class="sidenav-trigger">
+          <i class="material-icons">menu</i>
+        </a>
+        <!-- ロゴ -->
+        <a href="#" class="brand-logo">
+          <img
+          src="../static/logo.png"
+            alt="Logo"
+            style="height: 50px; margin-top: 5px"
+          />
+        </a>
+      </div>
+    </nav>
+
+    <!-- サイドナビゲーション -->
+    <ul id="slide-out" class="sidenav black">
+      <li>
+        <a href="/report/register" class="white-text">ログ新規登録</a>
+      </li>
+      <li><a href="/report/list" class="white-text">ログ一覧</a></li>
+      <li><a href="/station/list" class="white-text">会員情報</a></li>
+    </ul>
+    <div class="container">
+      <h4 class="center-align">ログ一覧</h4>
+
+      <!-- ログ一覧テーブル -->
+      <table class="highlight centered">
+        <thead>
+          <tr>
+              <th>ID</th>
+              <th>GPTログID</th>
+              <th>回答者</th>
+              <th>概要</th>
+              <th>詳細</th>
+              <th>回答内容</th>
+              <th>タイムスタンプ</th>
+          </tr>
+      </thead>
+      <tbody>
+          {% for log in logs %}
+          <tr>
+              <td>{{ log[0] }}</td> <!-- ID -->
+              <td>{{ log[1] }}</td> <!-- GPTログID -->
+              <td>{{ log[2] }}</td> <!-- 回答者 -->
+              <td>{{ log[3] }}</td> <!-- 概要 -->
+              <td>{{ log[4] }}</td> <!-- 詳細 -->
+              <td>{{ log[5] }}</td> <!-- 回答内容 -->
+              <td>{{ log[6].strftime("%Y-%m-%d %H:%M:%S") }}</td> <!-- タイムスタンプ -->
+          </tr>
+          {% endfor %}
+      </tbody>
+      </table>
+
+      <!-- 戻るボタン -->
+      <div class="center-align" style="margin-top: 20px">
+        <a href="./" class="btn waves-effect waves-light">
+          戻る
+          <i class="material-icons left">arrow_back</i>
+        </a>
+      </div>
+    </div>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        var elems = document.querySelectorAll(".sidenav");
+        M.Sidenav.init(elems, {
+          edge: "left",
+          draggable: false, // ドラッグで開閉できないように設定
+        });
+      });
+    </script>
+    <!-- Materialize JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+  </body>
+</html>

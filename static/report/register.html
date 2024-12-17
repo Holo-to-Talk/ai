@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ログ内容入力フォーム</title>
+
+    <!-- Google Material Icons -->
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet"
+    />
+    <!-- Materialize CSS -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css"
+    />
+    <!-- Google Fonts Noto Sans JP -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="../static/report/register.css" />
+    <link rel="stylesheet" href="../static/header.css" />
+  </head>
+  <body>
+    <!-- ヘッダー -->
+    <nav class="black">
+      <div class="nav-wrapper">
+        <!-- メニューアイコン -->
+        <a href="#" data-target="slide-out" class="sidenav-trigger">
+          <i class="material-icons">menu</i>
+        </a>
+        <!-- ロゴ -->
+        <a href="#" class="brand-logo">
+          <img
+          src="../static/logo.png"
+            alt="Logo"
+            style="height: 50px; margin-top: 5px"
+          />
+        </a>
+      </div>
+    </nav>
+
+    <!-- サイドナビゲーション -->
+    <ul id="slide-out" class="sidenav black">
+      <li>
+        <a href="/report/register" class="white-text">ログ入力</a>
+      </li>
+      <li><a href="/report/list" class="white-text">ログ一覧</a></li>
+      <li><a href="/station/list" class="white-text">駅新規登録</a></li>
+    </ul>
+    <div class="container">
+      <h4 class="center-align">ログ内容入力フォーム</h4>
+
+        <form id="reportForm" method="POST" action="">
+
+        <!-- 担当者名 -->
+        <div class="input-field">
+          <input
+            type="text"
+            id="personInCharge"
+            name="responder"
+            value="{{ form_data.responder }}"
+            required
+          />
+          <label for="personInCharge">担当者名</label>
+        </div>
+
+        <!-- 概要 -->
+        <div class="input-field">
+          <input type="text" id="overview" name="about" value="{{ form_data.about }}" required />
+          <label for="overview">問い合わせ概要</label>
+        </div>
+
+        <!-- 問い合わせ詳細 -->
+        <div class="input-field">
+          <textarea
+            id="inquiryContent"
+            name="detail"
+            class="materialize-textarea"
+            required
+          >{{ form_data.detail }}</textarea>
+          <label for="inquiryContent">問い合わせ詳細</label>
+        </div>
+
+        <!-- 回答内容 -->
+        <div class="input-field">
+          <textarea
+            id="responseContent"
+            name="answer"
+            class="materialize-textarea"
+            required
+          >{{ form_data.answer }}</textarea>
+          <label for="responseContent">回答</label>
+        </div>
+      
+        <!-- 送信ボタン -->
+        <div class="center-align">
+          <a
+            href="#previewModal"
+            class="btn waves-effect waves-light modal-trigger"
+            id="previewButton"
+          >
+            プレビュー
+            <i class="material-icons right">visibility</i>
+          </a>
+        </div>
+      </form>
+    </div>
+
+    <!-- モーダル -->
+<div id="previewModal" class="modal">
+  <div class="modal-content">
+    <h4>プレビュー</h4>
+
+    <!-- 担当者名 -->
+    <div class="preview-item">
+      <div class="preview-item-title">担当者名</div>
+      <div class="preview-item-content" id="previewPersonInCharge"></div>
+    </div>
+
+    <!-- 概要 -->
+    <div class="preview-item">
+      <div class="preview-item-title">問い合わせ概要</div>
+      <div class="preview-item-content" id="previewOverview"></div>
+    </div>
+
+    <!-- 問い合わせ詳細 -->
+    <div class="preview-item">
+      <div class="preview-item-title">問い合わせ詳細</div>
+      <div class="preview-item-content" id="previewInquiryContent"></div>
+    </div>
+
+    <!-- 回答内容 -->
+    <div class="preview-item">
+      <div class="preview-item-title">回答内容</div>
+      <div class="preview-item-content" id="previewResponseContent"></div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <a href="#!" class="modal-close waves-effect waves-green btn-flat">閉じる</a>
+    <button
+      type="submit"
+      form="reportForm"
+      class="modal-close btn waves-effect waves-light"
+    >
+      送信
+    </button>
+  </div>
+</div>
+
+
+    <!-- Materialize JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+
+    <script>
+      // 初期化処理
+      document.addEventListener("DOMContentLoaded", function () {
+        var elems = document.querySelectorAll(".sidenav");
+        M.Sidenav.init(elems, {
+          edge: "left",
+          draggable: false, // ドラッグで開閉できないように設定
+        });
+        // Autocompleteコンポーネントの初期化
+        var elems = document.querySelectorAll(".autocomplete");
+        M.Autocomplete.init(elems, {
+          data: {
+            無人駅: null,
+            AI: null,
+            自動運転駅: null,
+            案内ロボット: null,
+          },
+          limit: 5, // 表示する最大候補数
+          minLength: 0, // 入力がなくても候補を表示
+        });
+
+        // モーダルの初期化
+        var modalElems = document.querySelectorAll(".modal");
+        M.Modal.init(modalElems);
+
+        // 改行を <br> に変換する関数
+        function nl2br(str) {
+          return str.replace(/\n/g, "<br>");
+        }
+
+        // プレビューボタンがクリックされた際の処理
+        document.getElementById("previewButton").addEventListener("click", function () {
+          // 各フィールドの値をプレビュー表示
+          document.getElementById("previewPersonInCharge").textContent =
+            document.getElementById("personInCharge").value;
+          document.getElementById("previewOverview").textContent =
+            document.getElementById("overview").value;
+          document.getElementById("previewInquiryContent").innerHTML = nl2br(
+            document.getElementById("inquiryContent").value
+          );
+          document.getElementById("previewResponseContent").innerHTML = nl2br(
+            document.getElementById("responseContent").value
+          );
+        });
+      });
+    </script>
+  </body>
+</html>

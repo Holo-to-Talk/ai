@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ログイン画面</title>
+
+    <!-- Google Material Icons -->
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet"
+    />
+    <!-- Materialize CSS -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css"
+    />
+    <!-- Google Fonts Noto Sans JP -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./static/station/login.css" />
+  </head>
+  <body>
+    <div class="container">
+      <div class="row">
+        <div class="col s12">
+          <div class="card">
+            <div class="card-content">
+              <span class="card-title center-align">ログイン</span>
+              <!-- エラーメッセージの表示 -->
+              {% if error_msg %}
+                <p style="color: red;">{{ error_msg }}</p>
+              {% endif %}
+              <form method="POST" action="">
+                <!-- 駅番入力フィールド -->
+                <div class="input-field">
+                  <i class="material-icons prefix">account_circle</i>
+                  <input id="station_id" type="text" name="num" required />
+                  <label for="station_id">駅番</label>
+                </div>
+
+                <!-- パスワード入力フィールド -->
+                <div class="input-field" style="position: relative;">
+                  <i class="material-icons prefix">lock</i>
+                  <input id="password" type="password" name="password" required />
+                  <label for="password">パスワード</label>
+                  <i
+                    class="material-icons suffix"
+                    id="toggle-password"
+                    style="position: absolute; right: 0; top: 0; bottom: 0; margin: auto; cursor: pointer;"
+                  >
+                    visibility
+                  </i>
+                </div>
+
+                <!-- ログインボタン -->
+                <div class="center-align">
+                  <button type="submit" class="btn waves-effect waves-light">
+                    ログイン
+                    <i class="material-icons right">send</i>
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Materialize JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script>
+      // パスワードの表示/非表示切り替え
+      document.getElementById("toggle-password").addEventListener("click", function () {
+        const passwordInput = document.getElementById("password");
+        const icon = this;
+        
+        if (passwordInput.type === "password") {
+          passwordInput.type = "text";
+          icon.textContent = "visibility_off";
+        } else {
+          passwordInput.type = "password";
+          icon.textContent = "visibility";
+        }
+      });
+    </script>
+  </body>
+</html>

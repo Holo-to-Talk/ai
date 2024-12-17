@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ユーザー一覧</title>
+
+    <!-- Google Material Icons -->
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet"
+    />
+    <!-- Materialize CSS -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css"
+    />
+    <!-- Google Fonts Noto Sans JP -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body,button {
+        font-family: "Noto Sans JP", sans-serif;
+      }
+
+      /* 画面幅が600px以下の場合に住所列を非表示にする */
+      @media (max-width: 600px) {
+        .address-column {
+          display: none;
+        }
+      }
+
+      /* アイコンの色設定 */
+      .edit-icon,
+      .delete-icon {
+        color: white !important;
+      }
+
+      /* 削除ボタンの背景色を赤に設定 */
+      .delete-button {
+        background-color: #ff3f3f !important;
+      }
+
+      /* モーダルのサイズ調整 */
+      .modal {
+        width: 400px !important;
+        max-height: 200px;
+      }
+
+      /* モーダル内の削除ボタンとメッセージのスタイル */
+      .modal-delete-btn {
+        background-color: #ff3f3f !important;
+        color: white !important;
+      }
+      .modal-cancel-btn {
+        background-color: #26a69a !important; /* Materializeデフォルトのボタン色 */
+        color: white !important;
+      }
+      #deleteMessage {
+        font-size: 1.2em;
+      }
+      .move{
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+      }
+      .move_menu{
+        width: 10%;
+      }
+
+      .move_menu a{
+        color: #000;
+      }
+
+      .move_menu a:hover{
+        color: #555;
+      }
+
+
+    </style>
+    <link rel="stylesheet" href="/static/header.css" />
+  </head>
+  <body>
+    <!-- ヘッダー -->
+    <nav class="black">
+      <div class="nav-wrapper">
+        <!-- メニューアイコン -->
+        <a href="#" data-target="slide-out" class="sidenav-trigger">
+          <i class="material-icons">menu</i>
+        </a>
+        <!-- ロゴ -->
+        <a href="#" class="brand-logo">
+          <img
+            src="/static/logo.png"
+            alt="Logo"
+            style="height: 50px; margin-top: 5px"
+          />
+        </a>
+      </div>
+    </nav>
+
+    <!-- サイドナビゲーション -->
+    <ul id="slide-out" class="sidenav black">
+      <li>
+        <a href="/report/register" class="white-text">ログ入力</a>
+      </li>
+      <li><a href="/report/list" class="white-text">ログ一覧</a></li>
+      <li><a href="/station/list" class="white-text">駅新規登録</a></li>
+    </ul>
+    <div class="container">
+      <h4 class="center-align">ユーザー一覧</h4>
+      <div class="move">
+        <div class="move_menu"><a href="/">＜ 戻る</a></div>
+        <div class="move_menu"><a href="/station/register">新規登録 ＞</a></div>
+      </div>
+      <!-- ユーザー一覧テーブル -->
+      <table class="highlight centered">
+        <thead>
+          <tr>
+            <th>駅名</th>
+            <th>駅版</th>
+            <th class="address-column">住所</th>
+            <th>電話番号</th>
+            <th>編集</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for station in stations %}
+          <tr>
+            <td>{{ station.name }}</td>
+            <td>{{ station.station_num }}</td>
+            <td class="address-column">{{ station.address }}</td>
+            <td>{{ station.phone_num }}</td>
+            <td>
+              <form action="" method="post">
+                  <input type="hidden" name="station_num" value="{{ station.station_num }}">
+                  <input type="submit" name="action" value="編集" class="btn-small waves-effect waves-light">
+                  <input type="submit" name="action" value="削除" class="btn-small waves-effect waves-red">
+              </form>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+      <!-- 戻るボタン -->
+      <div class="center-align" style="margin-top: 20px">
+        <a href="index.html" class="btn waves-effect waves-light">
+          戻る
+          <i class="material-icons left">arrow_back</i>
+        </a>
+      </div>
+    </div>
+
+    <!-- Materialize JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+  </body>
+</html>

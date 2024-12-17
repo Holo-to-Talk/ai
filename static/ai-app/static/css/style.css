@@ -1,0 +1,98 @@
+/* 余白削除 */
+body, html {
+    margin: 0;
+    padding: 0;
+    background-color: rgb(0, 0, 0);
+}
+
+/* pythonで使用 */
+.display_none {
+    display: none;
+}
+
+/* 親要素指定 */
+#wrapper {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+}
+
+/* テロップ（枠組み） */
+#div_telop {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(255, 255, 255, 0.25);
+    z-index: 2;
+}
+
+/* テロップ（テキスト） */
+#telop {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    text-align: center;
+    transform-origin: 50% 50%;
+    transform: translate(-50%, -50%) rotateY(180deg);
+    width: 80vw;
+    height: auto;
+    font-size: 50px;
+    color: rgb(255, 255, 255);
+    font-weight: bold;
+    z-index: 2;
+}
+
+/* ホログラム画像 */
+#div_img img:nth-child(1), #div_img img:nth-child(2), #div_img img:nth-child(3) {
+    display: none;
+    width: 100vw;
+    height: 100vh;
+    z-index: 0;
+}
+
+/* QRコード画像 */
+#div_img img:nth-child(4) {
+    display: none;
+    width: 100vw;
+    height: auto;
+    z-index: 0;
+}
+
+/* 画像切替で使用 */
+#div_img img.active {
+    display: block;
+}
+
+/* アウトプット（テキスト） */
+#output {
+    position: absolute;
+    top: 85%;
+    left: 50%;
+    text-align: center;
+    transform-origin: 50% 50%;
+    transform: translate(-50%, -50%) rotateY(180deg);
+    width: 80vw;
+    height: auto;
+    font-size: 50px;
+    color: rgb(255, 255, 255);
+    font-weight: bold;
+    z-index: 1;
+}
+
+/* カウントダウン（テキスト） */
+#countdown {
+    position: absolute;
+    top: 90%;
+    left: 50%;
+    text-align: center;
+    transform-origin: 50% 50%;
+    transform: translate(-50%, -50%) rotateY(180deg);
+    width: 56vw;
+    height: auto;
+    font-size: 35px;
+    color: rgb(255, 255, 255);
+    font-weight: bold;
+    z-index: 1;
+}

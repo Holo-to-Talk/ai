@@ -1,0 +1,30 @@
+/* 常にメニューアイコンを表示 */
+.sidenav-trigger {
+  display: block !important;
+}
+
+/* ロゴを中央に配置 */
+.brand-logo {
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+/* メニューアイコンの位置調整 */
+.nav-wrapper .sidenav-trigger {
+  position: absolute;
+  left: 10px;
+}
+
+/* サイドナビゲーションのスタイル調整 */
+.sidenav.black {
+  background-color: #000; /* 背景を黒に */
+}
+
+.sidenav.black a {
+  color: #fff; /* 文字色を白に */
+}
+
+/* サイドナビゲーションのリンクホバー時 */
+.sidenav.black a:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}

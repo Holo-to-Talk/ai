@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ユーザー一覧</title>
+</head>
+<body>
+
+    <div>
+        <img src="/static/images/logo.png" alt="HOLO to Talk ロゴ">
+        <h1>ユーザー一覧</h1>
+    </div>
+
+    <table border="1">
+        <caption>駅情報のリスト</caption>
+        <tr>
+            <th>駅名</th>
+            <th>駅番</th>
+            <th>駅の住所</th>
+            <th>駅の電話番号</th>
+            <th>編集</th>
+            <th>削除</th>
+        </tr>
+        {% for station in stations %}
+        <tr>
+            <td>{{ station.name }}</td>
+            <td>{{ station.station_num }}</td>
+            <td>{{ station.address }}</td>
+            <td>{{ station.phone_num }}</td>
+            <td>
+                <form action="" method="post">
+                    <input type="hidden" name="station_num" value="{{ station.station_num }}">
+                    <input type="submit" name="action" value="編集" class=>
+            </td>
+            <td>
+                <input type="submit" name="action" value="削除" onclick="return confirm('駅番号 {{ station.station_num }} を本当に削除しますか？');">
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    
+
+    <a href="/">戻る</a>
+
+</body>
+</html>

@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>新規会員登録</title>
+
+    <!-- Google Material Icons -->
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet"
+    />
+    <!-- Materialize CSS -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css"
+    />
+    <!-- Google Fonts Noto Sans JP -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP&display=swap"
+      rel="stylesheet"
+    />
+    <!-- 外部CSSファイル -->
+    <link rel="stylesheet" href="./static/station-register.css" />
+    <link rel="stylesheet" href="./static/header.css" />
+  </head>
+  <body>
+    <!-- ヘッダー -->
+    <nav class="black">
+      <div class="nav-wrapper">
+        <!-- メニューアイコン -->
+        <a href="#" data-target="slide-out" class="sidenav-trigger">
+          <i class="material-icons">menu</i>
+        </a>
+        <!-- ロゴ -->
+        <a href="#" class="brand-logo">
+          <img
+<<<<<<< HEAD
+            src="logo.png"
+=======
+          src="./static/logo.png"
+>>>>>>> a800065c9d29b3203134cd9c83ee04d584d5d736
+            alt="Logo"
+            style="height: 50px; margin-top: 5px"
+          />
+        </a>
+      </div>
+    </nav>
+
+    <!-- サイドナビゲーション -->
+    <ul id="slide-out" class="sidenav black">
+      <li>
+        <a href="station-register.html" class="white-text">ログ新規登録</a>
+      </li>
+      <li><a href="log-list.html" class="white-text">ログ一覧</a></li>
+      <li><a href="member-info.html" class="white-text">会員情報</a></li>
+    </ul>
+
+    <div class="container">
+      <div class="row">
+        <div class="col s12">
+          <div class="card">
+            <div class="card-content">
+              <span class="card-title center-align">新規会員登録</span>
+              <form id="registrationForm">
+                <!-- 駅名入力フィールド -->
+                <div class="input-field">
+                  <i class="material-icons prefix">location_on</i>
+                  <input id="station_name" type="text" required />
+                  <label for="station_name">駅名</label>
+                </div>
+
+                <!-- 駅番入力フィールド -->
+                <div class="input-field">
+                  <i class="material-icons prefix">account_circle</i>
+                  <input id="station_id" type="text" required />
+                  <label for="station_id">駅番</label>
+                </div>
+
+                <!-- 駅の住所入力フィールド -->
+                <div class="input-field">
+                  <i class="material-icons prefix">home</i>
+                  <input id="station_address" type="text" required />
+                  <label for="station_address">駅の住所</label>
+                </div>
+
+                <!-- 駅の電話番号入力フィールド -->
+                <div class="input-field">
+                  <i class="material-icons prefix">phone</i>
+                  <input id="station_phone" type="tel" required />
+                  <label for="station_phone">駅の電話番号</label>
+                </div>
+
+                <!-- パスワード入力フィールド -->
+                <div class="input-field" style="position: relative">
+                  <i class="material-icons prefix">lock</i>
+                  <input id="password" type="password" required />
+                  <label for="password">パスワード</label>
+                  <i
+                    class="material-icons suffix"
+                    id="toggle-password"
+                    style="
+                      position: absolute;
+                      right: 0;
+                      top: 0;
+                      bottom: 0;
+                      margin: auto;
+                      cursor: pointer;
+                    "
+                  >
+                    visibility
+                  </i>
+                </div>
+
+                <!-- 会員登録ボタン -->
+                <div class="center-align">
+                  <button
+                    type="button"
+                    class="btn waves-effect waves-light modal-trigger"
+                    href="#previewModal"
+                    id="previewButton"
+                  >
+                    プレビュー
+                    <i class="material-icons right">visibility</i>
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- プレビューモーダル -->
+    <div id="previewModal" class="modal">
+      <div class="modal-content">
+        <h5>登録内容プレビュー</h5>
+
+        <!-- 駅名 -->
+        <div class="preview-item">
+          <div class="preview-item-title">駅名</div>
+          <div class="preview-item-content" id="previewStationName"></div>
+        </div>
+
+        <!-- 駅番 -->
+        <div class="preview-item">
+          <div class="preview-item-title">駅番</div>
+          <div class="preview-item-content" id="previewStationId"></div>
+        </div>
+
+        <!-- 駅の住所 -->
+        <div class="preview-item">
+          <div class="preview-item-title">駅の住所</div>
+          <div class="preview-item-content" id="previewStationAddress"></div>
+        </div>
+
+        <!-- 駅の電話番号 -->
+        <div class="preview-item">
+          <div class="preview-item-title">駅の電話番号</div>
+          <div class="preview-item-content" id="previewStationPhone"></div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <a href="#!" class="modal-close waves-effect btn-flat">閉じる</a>
+        <button
+          type="button"
+          id="confirmButton"
+          class="btn waves-effect waves-light"
+        >
+          確定
+        </button>
+      </div>
+    </div>
+
+    <!-- Materialize JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        // サイドナビゲーションの初期化
+        var sidenavElems = document.querySelectorAll(".sidenav");
+        M.Sidenav.init(sidenavElems, {
+          edge: "left",
+          draggable: false, // ドラッグで開閉できないように設定
+        });
+
+        // モーダルの初期化
+        var modalElems = document.querySelectorAll(".modal");
+        M.Modal.init(modalElems);
+
+        // パスワードの表示/非表示切り替え
+        document
+          .getElementById("toggle-password")
+          .addEventListener("click", function () {
+            const passwordInput = document.getElementById("password");
+            const icon = this;
+
+            if (passwordInput.type === "password") {
+              passwordInput.type = "text";
+              icon.textContent = "visibility_off";
+            } else {
+              passwordInput.type = "password";
+              icon.textContent = "visibility";
+            }
+          });
+
+        // プレビューボタンのクリックイベント
+        document
+          .getElementById("previewButton")
+          .addEventListener("click", function () {
+            const form = document.getElementById("registrationForm");
+
+            // HTML5のバリデーションをトリガー
+            if (form.checkValidity()) {
+              // フォームデータをモーダルに表示
+              document.getElementById("previewStationName").textContent =
+                document.getElementById("station_name").value;
+              document.getElementById("previewStationId").textContent =
+                document.getElementById("station_id").value;
+              document.getElementById("previewStationAddress").textContent =
+                document.getElementById("station_address").value;
+              document.getElementById("previewStationPhone").textContent =
+                document.getElementById("station_phone").value;
+
+              // モーダルを表示
+              const modalInstance = M.Modal.getInstance(
+                document.getElementById("previewModal")
+              );
+              modalInstance.open();
+            } else {
+              // バリデーションエラーがある場合、デフォルトのエラーメッセージを表示
+              form.reportValidity();
+            }
+          });
+
+        // 確定ボタンのクリックイベント
+        document
+          .getElementById("confirmButton")
+          .addEventListener("click", function () {
+            const data = {
+              station_name: document.getElementById("previewStationName").textContent,
+              station_id: document.getElementById("previewStationId").textContent,
+              station_address: document.getElementById("previewStationAddress").textContent,
+              station_phone: document.getElementById("previewStationPhone").textContent,
+              password: document.getElementById("password").value, // パスワードも送信する場合
+            };
+
+            fetch("/register", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(data),
+            })
+              .then((response) => {
+                if (!response.ok) {
+                  throw new Error("ネットワークエラー");
+                }
+                return response.json();
+              })
+              .then((result) => {
+                // 登録成功の処理
+                M.toast({ html: "登録が完了しました。" });
+                // フォームをリセットする場合
+                document.getElementById("registrationForm").reset();
+                // モーダルを閉じる
+                const modalInstance = M.Modal.getInstance(
+                  document.getElementById("previewModal")
+                );
+                modalInstance.close();
+              })
+              .catch((error) => {
+                console.error("エラー:", error);
+                M.toast({ html: "登録中にエラーが発生しました。" });
+              });
+          });
+      });
+    </script>
+  </body>
+</html>

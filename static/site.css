@@ -1,0 +1,279 @@
+﻿@import url(https://fonts.googleapis.com/css?family=Share+Tech+Mono);
+@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@100..900&display=swap");
+body {
+  font-family: "Noto Sans JP", sans-serif;
+}
+
+p {
+  padding: 0;
+  margin: auto;
+}
+
+h1 {
+  text-align: center;
+  font-weight: 400;
+  font-size: 38px;
+}
+
+h2 {
+  margin-top: 0;
+  border-bottom: 1px solid black;
+  padding: 0 0 10px 0;
+  font-weight: 400;
+  font-size: 30px;
+}
+
+button {
+  margin: 20px 0 10px 0;
+  border: none;
+  border-radius: 3px;
+  padding: 5px 25px;
+  color: white;
+  font-family: "Noto Sans JP", sans-serif;
+  font-size: 26px;
+  font-weight: 300;
+  box-shadow: rgba(50, 50, 93, 0.25) 0px 6px 12px -2px,
+    rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
+  transition: transform 0.2s ease;
+}
+
+#startup-button {
+  margin: 5px 0 30px 0;
+}
+
+button:hover {
+  transform: scale(0.98);
+}
+
+
+label {
+  text-align: left;
+  color: #777776;
+  display: block;
+  margin: 0 0 10px 0;
+  font-size: 20px;
+}
+
+header {
+  text-align: center;
+}
+
+main {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.left-column,
+.center-column,
+.right-column {
+  min-width: 240px;
+  width: 30%;
+  margin: 0 1.5em 50px 1.5em;
+  text-align: center;
+}
+
+/* Left Column */
+#client-name {
+  text-align: left;
+  margin-bottom: 1em;
+  font-size: 22px;
+  color: #777776;
+}
+
+select {
+  height: 150px;
+}
+
+select option {
+  font-family: "Noto Sans JP", sans-serif;
+  padding: 8px 4px;
+}
+
+select::-webkit-scrollbar {
+  width: 0; /* 幅を0にすることでスクロールバーを非表示に */
+  height: 0;
+}
+
+/* Center Column */
+input {
+  font-size: 25px;
+  width: 100%;
+  height: 2.5em;
+  padding: 0;
+  display: block;
+  margin: 10px 0;
+  border-radius: 10px;
+}
+#phone-number {
+  padding: 0 10px;
+}
+
+div#volume-indicators {
+  padding: 10px;
+  margin-top: 20px;
+  width: 500px;
+  text-align: left;
+}
+
+div#volume-indicators > div {
+  display: block;
+  height: 20px;
+  width: 0;
+}
+
+#log {
+  -webkit-appearance: none; /* Chrome, Safari, Edge */
+  -moz-appearance: none; /* Firefox */
+  text-align: left;
+  border: 1px solid #686865;
+  padding: 20px 29px;
+  height: 400px;
+  overflow-y: scroll;
+  border-radius: 10px;
+  font-size: 14px;
+}
+#log::-webkit-scrollbar {
+  width: 0; /* 幅を0にすることでスクロールバーを非表示に */
+  height: 0;
+}
+
+.log-entry {
+  color: #686865;
+  font-size: 1.25em;
+  line-height: 1.25em;
+  margin: 0 0 1em 1em;
+  text-indent: -1.25em;
+  width: 90%;
+}
+
+/* Other Styles */
+.hide {
+  position: absolute !important;
+  top: -9999px !important;
+  left: -9999px !important;
+}
+
+button:disabled {
+  cursor: not-allowed;
+}
+
+@media (max-width: 860px) {
+  main {
+    flex-direction: column; /* 画面が小さくなったら縦並びに */
+    align-items: center; /* 要素を中央に揃える */
+  }
+
+  .left-column,
+  .center-column,
+  .right-column {
+    min-width: 240px;
+    width: 70%;
+  }
+}
+
+@media (max-width: 430px) {
+  main {
+    flex-direction: column; /* 画面が小さくなったら縦並びに */
+    align-items: center; /* 要素を中央に揃える */
+  }
+
+  .left-column,
+  .center-column,
+  .right-column {
+    min-width: 240px;
+    width: 70%;
+  }
+}
+
+/* AppBarのスタイル */
+.appbar {
+  background-color: #2196f3;
+  color: white;
+  padding: 10px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.appbar-container {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.brand-logo {
+  font-size: 24px;
+  text-decoration: none;
+  color: white;
+}
+
+.menu-icon {
+  display: none;
+  flex-direction: column;
+  cursor: pointer;
+}
+
+.menu-bar {
+  width: 25px;
+  height: 3px;
+  background-color: white;
+  margin: 3px 0;
+}
+
+.nav-links {
+  list-style: none;
+  display: flex;
+  gap: 20px;
+}
+
+.nav-links li a {
+  color: white;
+  text-decoration: none;
+  font-size: 18px;
+}
+
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: -250px;
+  width: 250px;
+  height: 100%;
+  background-color: #2196f3;
+  color: white;
+  transition: left 0.3s;
+  z-index: 1000;
+  padding: 10px;
+}
+
+.sidebar.active {
+  left: 0;
+}
+
+.sidebar ul {
+  list-style: none;
+  padding: 0;
+}
+
+.sidebar ul li {
+  margin: 15px 0;
+}
+
+.sidebar ul li a {
+  color: white;
+  text-decoration: none;
+  font-size: 18px;
+}
+
+/* レスポンシブ対応 */
+@media (max-width: 768px) {
+  .menu-icon {
+    display: flex;
+  }
+
+  .nav-links {
+    display: none;
+  }
+}

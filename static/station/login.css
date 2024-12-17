@@ -1,0 +1,21 @@
+/* 全体のレイアウト設定 */
+body, html {
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0;
+  font-family: 'Noto Sans JP', sans-serif; /* フォントを適用 */
+}
+.container {
+  max-width: 400px;
+  width: 100%;
+}
+
+/* 入力フィールドのフォント設定 */
+input[type="text"],
+input[type="password"],
+input[type="tel"],
+button {
+  font-family: 'Noto Sans JP', sans-serif;
+}
