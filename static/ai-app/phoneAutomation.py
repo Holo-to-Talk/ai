@@ -7,15 +7,21 @@ from constants import PhoneAutomationSettings
 import os
 import time
 
+# 電話をかける
 def phoneAutomation():
+    # URL取得
     URL = PhoneAutomationSettings.URL
 
+    # 代表電話番号取得
     PHONE_NUMBER = PhoneAutomationSettings.PHONE_NUMBER
 
+    # Driver Wait Time秒数取得
     WEB_DRIVER_WAIT_TIME = PhoneAutomationSettings.WEB_DRIVER_WAIT_TIME
 
+    # Time Sleep秒数取得
     TIME_SLEEP_TIME = PhoneAutomationSettings.TIME_SLEEP_TIME
 
+    # オプション
     options = Options()
     options.add_argument('--use-fake-ui-for-media-stream')
     options.add_argument('--headless')
@@ -25,8 +31,10 @@ def phoneAutomation():
     options.add_argument('--disable-gpu')
     options.add_argument('--disable-software-rasterizer')
 
+    # Chrome起動
     driver = webdriver.Chrome(options = options)
 
+    # URL遷移
     driver.get(URL)
 
     startUpButton = WebDriverWait(driver, WEB_DRIVER_WAIT_TIME).until(
@@ -54,10 +62,15 @@ def phoneAutomation():
     )
 
     while True:
+        # クラス取得
         hangUpOutGoingButton_className = hangUpOutGoingButton.get_attribute('class')
+        # hideというクラスがあるかどうか
         if 'hide' in hangUpOutGoingButton_className.split():
+            # 終了
             driver.quit()
+
             break
 
         else:
+            # 待機
             time.sleep(TIME_SLEEP_TIME)
