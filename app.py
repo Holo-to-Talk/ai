@@ -105,7 +105,7 @@ def login():
     if request.method == 'GET':
         # 日本語コメント: ユーザーが既にログインしている場合はトップページにリダイレクト
         if 'user' in session:
-            return redirect("/")
+            return redirect("/home/")
         else:
             return render_template('./station/login.html', error_msg=error_msg)
 
@@ -150,7 +150,7 @@ def login():
                         "phone_num": twilio_config[3]
                     }
 
-                return redirect('/')
+                return redirect('/home/')
             else:
                 error_msg = "ログインエラー: IDまたはパスワードが間違っています"
         else:
