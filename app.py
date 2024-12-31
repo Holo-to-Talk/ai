@@ -28,18 +28,23 @@ import phoneAutomation
 # .envファイルから環境変数を読み込む
 load_dotenv()
 
+# templateのfolderの取得
+TEMPLATE_FOLDER = AppSettings.TEMPLATE_FOLDER
+
 # Flaskアプリケーションを作成
-app = Flask(__name__,template_folder='./static/')
+app = Flask(__name__,template_folder=TEMPLATE_FOLDER)
 app.secret_key = os.environ.get("SECRET_KEY")
 
 # ai
 socketio.init_app(app)
 
 # 特殊文字やアンダースコアを除去する正規表現
-alphanumeric_only = re.compile("[\W_]+")
+ALPHANUMERIC_ONLY = AppSettings.ALPHANUMERIC_ONLY
+alphanumeric_only = re.compile(ALPHANUMERIC_ONLY)
 
 # 電話番号の形式を検証するための正規表現
-phone_pattern = re.compile(r"^[\d\+\-\(\) ]+$")
+PHONE_PATTERN = AppSettings.PHONE_PATTERN
+phone_pattern = re.compile(PHONE_PATTERN)
 
 # Twilioの電話番号を環境変数から取得
 twilio_number = os.environ.get("TWILIO_CALLER_ID")
@@ -97,6 +102,9 @@ def index():
         return render_template('index.html')
     return redirect('/station/login')
 
+# エラーメッセージの取得
+ERROR_MSG = TextSettings.ERROR_MSG
+
 # ログイン処理
 @app.route('/station/login', methods=['GET', 'POST'])
 def login():
@@ -152,9 +160,9 @@ def login():
 
                 return redirect('/')
             else:
-                error_msg = "ログインエラー: IDまたはパスワードが間違っています"
+                error_msg = ERROR_MSG
         else:
-            error_msg = "ログインエラー: IDまたはパスワードが間違っています"
+            error_msg = ERROR_MSG
 
         # 日本語コメント: エラーメッセージを渡してログインページを再表示
         return render_template('./station/login.html', error_msg=error_msg)
@@ -398,4 +406,5 @@ def handle_space_event():
 
 # アプリケーションを実行
 if __name__ == "__main__":
-    app.run(debug=True)
+    # app.run(debug=True)
+    app.run()

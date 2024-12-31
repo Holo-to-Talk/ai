@@ -1,5 +1,6 @@
 # テキスト
 class TextSettings:
+    ERROR_MSG = "ログインエラー: IDまたはパスワードが間違っています"
     QREVENT = "QRCodeを表示します"
     PHONEEVENT = "電話対応をご希望の場合、Spaceキーを押してください"
     PHONEEVENT2 = "駅員に電話をかけます"
@@ -10,6 +11,12 @@ class TextSettings:
 
 # app.py
 class AppSettings:
+    # templateのfolder
+    TEMPLATE_FOLDER = "./static/"
+    # 特殊文字やアンダースコア除去のための正規表現
+    ALPHANUMERIC_ONLY = "[\W_]+"
+    # 電話番号の正規表現
+    PHONE_PATTERN = "r'^[\d\+\-\(\) ]+$'"
     # Time Sleep秒数
     TIME_SLEEP = 1
     # QRCode Time Sleepカウント
