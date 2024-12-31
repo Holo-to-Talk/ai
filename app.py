@@ -10,12 +10,30 @@ import bcrypt
 from db import *
 from validation import *
 
+# ai
+from flask_socketio import SocketIO, emit
+from socketio_Config import socketio
+from constants import AppSettings, TextSettings
+import time
+
+import socketio_emit
+import voice_Recording
+import audio_To_Text
+import qr_code_found
+import chatGPT_API_Output
+import text_To_Audio_Animation
+import delete_Recording
+import phoneAutomation
+
 # .envファイルから環境変数を読み込む
 load_dotenv()
 
 # Flaskアプリケーションを作成
 app = Flask(__name__,template_folder='./static/')
 app.secret_key = os.environ.get("SECRET_KEY")
+
+# ai
+socketio.init_app(app)
 
 # 特殊文字やアンダースコアを除去する正規表現
 alphanumeric_only = re.compile("[\W_]+")
@@ -141,419 +159,242 @@ def login():
         # 日本語コメント: エラーメッセージを渡してログインページを再表示
         return render_template('./station/login.html', error_msg=error_msg)
 
-# ユーザー登録処理
-@app.route('/station/register', methods=['GET', 'POST'])
-def register():
-    error_msg = []
+# ai
+# Time Sleep秒数取得
+TIME_SLEEP = AppSettings.TIME_SLEEP
+# QR用Time Sleep取得
+QR_TIME_SLEEP_COUNT = AppSettings.QR_TIME_SLEEP_COUNT
+# Time Sleepカウント取得
+TIME_SLEEP_COUNT = AppSettings.TIME_SLEEP_COUNT
 
-    form_data = {
-        "name": "",
-        "station_num": "",
-        "address": "",
-        "phone_num": "",
-        "app_sid": "",
-        "app_key": "",
-        "app_secret": "",
-        "password": ""
-    }
+# 会話用FLag
+flag_continuation =True
+# Space用Flag
+flag_space = False
+# Enter用Flag
+flag_enter2 = False
+# 会話
+conversation_history = []
+# 入力会話
+conversation_input = ""
+# 出力
+conversation_output = ""
 
-    if request.method == 'POST':
-        # 入力内容を保持
-        form_data = {
-            "name": request.form.get("name", ""),
-            "station_num": request.form.get("station_num", ""),
-            "address": request.form.get("address", ""),
-            "phone_num": request.form.get("phone_num", ""),
-            "app_sid": request.form.get("app_sid", ""),
-            "app_key": request.form.get("app_key", ""),
-            "app_secret": request.form.get("app_secret", ""),
-            "password": request.form.get("password", "")
-        }
+def ai():
+    # ボイス録音・作成したファイルのディレクトリ取得
+    savedDirectory = voice_Recording.voice_Recording()
 
-        # バリデーション
-        error_msg.append(validate_name(form_data["name"]))
-        error_msg.append(validate_station_num(form_data["station_num"]))
-        error_msg.append(validate_address(form_data["address"]))
-        error_msg.append(validate_phone_num(form_data["phone_num"]))
-        error_msg.append(validate_app_sid(form_data["app_sid"]))
-        error_msg.append(validate_app_key(form_data["app_key"]))
-        error_msg.append(validate_app_secret(form_data["app_secret"]))
-        error_msg.append(validate_password(form_data["password"]))
+    # ボイスをテキストに変換・取得
+    inputContent = audio_To_Text.audio_To_Text(savedDirectory)
+    # 会話保存用に保管
+    conversation_input = inputContent
 
-        error_msg = [msg for msg in error_msg if msg]
+    # 作成したファイルの削除
+    delete_Recording.delete_Recording(savedDirectory)
 
-        if not error_msg:
+    global conversation_history
+    # 入力値に特定の単語があるか
+    if qr_code_found.qr_code_found(inputContent):
+        # テキスト取得
+        outputContent = TextSettings.QREVENT
+        # 会話保存用に保管
+        conversation_output = outputContent
+        # テキスト出力
+        socketio_emit.socketio_emit_output(outputContent)
+        # Animation・音声出力
+        text_To_Audio_Animation.text_To_Audio_Animation(outputContent)
 
-            # パスワードをハッシュ化
-            hashed_password = bcrypt.hashpw(form_data["password"].encode('utf-8'), bcrypt.gensalt())
+        # テキスト削除
+        socketio_emit.socketio_emit_output_reset()
+        # QRCode表示
+        socketio_emit.socketio_emit_image_qr_add_active()
+        # 秒数カウント
+        for count in range(QR_TIME_SLEEP_COUNT):
+            socketio_emit.socketio_emit_countdown(QR_TIME_SLEEP_COUNT - count)
+            time.sleep(TIME_SLEEP)
+        # カウント削除
+        socketio_emit.socketio_emit_countdown_reset()
+        # QRCode削除
+        socketio_emit.socketio_emit_image_qr_remove_active()
 
-            # データベースに保存
-            conn = db_connection()
+    else:
+        # テキスト取得
+        outputContent = chatGPT_API_Output.chatGPT_API_Output(conversation_history, inputContent)
+        # 会話保存用に保管
+        conversation_output = outputContent
+        # テキスト出力
+        socketio_emit.socketio_emit_output(outputContent)
+        # Animation・音声出力
+        text_To_Audio_Animation.text_To_Audio_Animation(outputContent)
 
-            cursor = conn.cursor()
-            cursor.execute(''' use holo_to_talk ''')
-            # usersテーブルにデータを挿入
-            cursor.execute('''
-                INSERT INTO users (station_num, password)
-                VALUES (%s, %s)
-                ''', (form_data["station_num"], hashed_password))
+    # テキスト取得
+    outputContent = TextSettings.PHONEEVENT
+    # テキスト出力
+    socketio_emit.socketio_emit_output(outputContent)
+    # Animation・音声出力
+    text_To_Audio_Animation.text_To_Audio_Animation(outputContent)
 
-            # station_infoテーブルにデータを挿入
-            cursor.execute('''
-            INSERT INTO station_info (name, station_num, address, phone_num, app_sid, app_key, app_secret)
-            VALUES (%s, %s, %s, %s, %s, %s, %s)
-            ''', (form_data["name"], form_data["station_num"], form_data["address"], form_data["phone_num"], form_data["app_sid"], form_data["app_key"], form_data["app_secret"]))
+    global flag_space
+    count = 0
+    while True:
+        # Spaceが押されたかどうか
+        if flag_space:
+            # カウント削除
+            socketio_emit.socketio_emit_countdown_reset()
 
-            # データベースに変更を保存
-            conn.commit()
-            cursor.close()
-            conn.close()
+            # テキスト取得
+            outputContent = TextSettings.PHONEEVENT2
+            # テキスト出力
+            socketio_emit.socketio_emit_output(outputContent)
+            # Animation・音声出力
+            text_To_Audio_Animation.text_To_Audio_Animation(outputContent)
 
-            return redirect(url_for('login'))  # 成功ページにリダイレクト
+            # 電話をかける（バックグラウンド）
+            phoneAutomation.phoneAutomation()
 
-    return render_template('./station/register.html', error_msg=error_msg, form_data=form_data)
+            break
 
-# /editにアクセスしたときに/にリダイレクト
-@app.route('/station/edit/',methods=['GET'])
-def edit_index():
-    if request.method == 'GET':
-        return redirect("/")
+        # カウントが終わったかどうか
+        elif count == TIME_SLEEP_COUNT:
+            # カウント削除
+            socketio_emit.socketio_emit_countdown_reset()
 
-#ユーザーリスト表示処理
-@app.route('/station/list', methods=['GET','POST'])
-def station_list():
-    if request.method == "GET":
-        # データベース接続
-        conn = db_connection()
-        cursor = conn.cursor()
+            # Flag変更
+            socketio_emit.socketio_emit_flag_space()
+            flag_space = True
 
-        try:
-            # データベースを選択
-            cursor.execute('''USE holo_to_talk''')
+            break
 
-            # station_infoテーブルから必要なデータを取得
-            cursor.execute('''SELECT name, station_num, address, phone_num FROM station_info''')
-            rows = cursor.fetchall()
-
-            # カラム名をキーにして辞書形式でデータを作成
-            stations = [
-                {"name": row[0], "station_num": row[1], "address": row[2], "phone_num": row[3]}
-                for row in rows
-            ]
-
-            # データをHTMLテンプレートに渡す
-            return render_template('./station/list.html', stations=stations)
-
-        except Exception as e:
-            # エラー処理
-            error_message = f"データの取得中にエラーが発生しました: {e}"
-            return render_template('./station/list.html', error_message=error_message)
-
-        finally:
-            # リソースを解放
-            cursor.close()
-            conn.close()
-
-    if request.method == "POST":
-        station_num = request.form['station_num']
-        action = request.form['action']
-
-    if action == "編集":
-        # 編集画面にリダイレクト
-        return redirect(f"/station/edit/{station_num}")
-
-    elif action == "削除":
-        # データ削除処理
-        conn = db_connection()
-        cursor = conn.cursor()
-
-        try:
-            cursor.execute('''USE holo_to_talk''')
-            cursor.execute('''DELETE FROM station_info WHERE station_num = %s''', (station_num,))
-            cursor.execute('''DELETE FROM users WHERE station_num = %s''', (station_num,))
-
-            conn.commit()
-
-            # 削除後にリスト画面にリダイレクト
-            return redirect('/station/list')
-
-        except Exception as e:
-            return f"データ削除中にエラーが発生しました: {e}"
-
-        finally:
-            cursor.close()
-            conn.close()
-
-# ユーザー編集処理
-@app.route('/station/edit/<station_num>', methods=['GET', 'POST'])
-def edit_station(station_num):
-    error_msg = []
-    form_data = {}
-    print(station_num)#編集駅番号
-
-    conn = db_connection()
-    if conn is None:
-        return "データベース接続エラー", 500
-
-    cursor = conn.cursor(dictionary=True)
-    cursor.execute("USE holo_to_talk")
-
-    # GETメソッドでデータを取得し編集ページを表示
-    if request.method == 'GET':
-        query = "SELECT * FROM station_info WHERE station_num = %s"
-        cursor.execute(query, (station_num,))
-        result = cursor.fetchone()
-
-        if not result:
-            return redirect("/station/list?station_num=not_found")
-
-        form_data = {
-            "name": result["name"],
-            "station_num": result["station_num"],
-            "address": result["address"],
-            "phone_num": result["phone_num"],
-            "type_AI": result["type_AI"],
-            "app_sid": result["app_sid"],
-            "app_key": result["app_key"],
-            "app_secret": result["app_secret"]
-        }
-        print(form_data)#編集内容
-
-        cursor.close()
-        return render_template("./station/edit.html", form_data=form_data)
-
-    # POSTメソッドでデータを更新
-    if request.method == 'POST':
-        print("POST")
-        form_data = {
-            "name": request.form.get("name", ""),
-            "station_num": request.form.get("station_num", ""),
-            "address": request.form.get("address", ""),
-            "phone_num": request.form.get("phone_num", ""),
-            "type_AI": request.form.get("type_AI", ""),
-        }
-        # type_AI を boolean に変換
-        if form_data["type_AI"].lower() in ("1"):
-            form_data["type_AI"] = 1
         else:
-            form_data["type_AI"] = 0
-        print("受け取りデータ",form_data)
+            # 秒数カウント
+            socketio_emit.socketio_emit_countdown(TIME_SLEEP_COUNT - count)
+            time.sleep(TIME_SLEEP)
+            count += 1
 
-        # バリデーション
-        error_msg.append(validate_name(form_data["name"]))
-        error_msg.append(validate_address(form_data["address"]))
-        error_msg.append(validate_phone_num(form_data["phone_num"]))
-        error_msg = [msg for msg in error_msg if msg]
+    # テキスト取得
+    outputContent = TextSettings.ENTEREVENT
+    # テキスト出力
+    socketio_emit.socketio_emit_output(outputContent)
+    # Animation・音声出力
+    text_To_Audio_Animation.text_To_Audio_Animation(outputContent)
 
-        if error_msg:
-            return render_template("./station/edit.html", form_data=form_data, error_msg=error_msg)
+    global flag_continuation
+    global flag_enter2
+    count = 0
+    while True:
+        # Enterが押されたかどうか
+        if flag_enter2:
+            # カウント削除
+            socketio_emit.socketio_emit_countdown_reset()
 
-        # データを更新
-        try:
-            conn.start_transaction()
+            # 会話削除
+            conversation_history = []
 
-            # 新しい station_num が他の駅番号と重複していないか確認
-            if form_data["station_num"] != station_num:  # 駅番号が変更された場合
-                check_query = "SELECT COUNT(*) AS count FROM station_info WHERE station_num = %s"
-                cursor.execute(check_query, (form_data["station_num"],))
-                count = cursor.fetchone()["count"]  # 重複数を取得
+            # Flag変更
+            flag_continuation = False
 
-                if count > 0:  # 既に存在する場合
-                    conn.rollback()  # トランザクションを元に戻す
-                    error_msg.append("この駅番号は既に存在しています。")
-                    return render_template("edit.html", form_data=form_data, error_msg=error_msg)
+            break
 
-            # `station_info`テーブルのデータを更新
-            update_station_info = """
-                UPDATE station_info
-                SET name = %s, station_num = %s, address = %s, phone_num = %s, type_AI = %s
-                WHERE station_num = %s
-            """
-            cursor.execute(
-                update_station_info,
-                (
-                    form_data["name"],
-                    form_data["station_num"],
-                    form_data["address"],
-                    form_data["phone_num"],
-                    form_data["type_AI"],
-                    station_num,
-                ),
-            )
+        # カウントが終わったかどうか
+        elif count == TIME_SLEEP_COUNT:
+            # カウント削除
+            socketio_emit.socketio_emit_countdown_reset()
 
-            print("更新完了", form_data)
-            conn.commit()  # トランザクションを確定
-        except Exception as e:
-            conn.rollback()  # エラーが発生した場合はロールバック
-            return f"更新中にエラーが発生しました: {e}", 500
-        finally:
-            cursor.close()
+            # 会話保存
+            conversation_history.append({"role": "user", "content": conversation_input})
+            conversation_history.append({"role": "assistant", "content": conversation_output})
 
-        return redirect('/station/list?update_done')
-    
-#パスワード変更処理
-@app.route('/user/ed-pass', methods=['GET', 'POST'])
-def change_password():
-    # エラーメッセージリスト
-    error_msg = []
+            # Flag変更
+            flag_continuation = True
+            socketio_emit.socketio_emit_flag_enter2()
+            flag_enter2 = True
 
-    # ログインしていない場合はリダイレクト
-    if 'user' not in session:
-        return redirect('/station/login')
+            break
 
-    user_id = session['user']  # 現在のユーザーID
+        else:
+            # 秒数カウント
+            socketio_emit.socketio_emit_countdown(TIME_SLEEP_COUNT - count)
+            time.sleep(TIME_SLEEP)
+            count += 1
 
-    if request.method == 'POST':
-        # フォームデータを取得
-        current_password = request.form.get('current_password', '')
-        new_password = request.form.get('new_password', '')
-        confirm_password = request.form.get('confirm_password', '')
+    # Flagリセット
+    socketio_emit.socketio_emit_flag_enter()
+    flag_enter2 = False
+    socketio_emit.socketio_emit_flag_enter2()
+    flag_space = False
+    socketio_emit.socketio_emit_flag_space()
 
-        # 入力チェック　
-        if not current_password:
-            error_msg.append("現在のパスワードを入力してください。")
-        if not new_password or not confirm_password:
-            error_msg.append("新しいパスワードを入力してください。")
-        if new_password != confirm_password:
-            error_msg.append("新しいパスワードが一致していません。")
-        if len(new_password) < 5:
-            error_msg.append("新しいパスワードは6文字以上である必要があります。")
+    # 会話を続ける
+    if flag_continuation:
+        # テキスト取得
+        outputContent = TextSettings.CONVERSATIONEVENT
+        # テキスト出力
+        socketio_emit.socketio_emit_output(outputContent)
+        # Animation・音声出力
+        text_To_Audio_Animation.text_To_Audio_Animation(outputContent)
 
-        # エラーメッセージがあればフォームを再表示
-        if error_msg:
-            return render_template('change-password.html', error_msg=error_msg)
+        # テキスト削除
+        socketio_emit.socketio_emit_output_reset()
 
-        # データベース接続
-        conn = db_connection()
-        cursor = conn.cursor(dictionary=True)
-        cursor.execute("USE holo_to_talk")
+        # テロップ表示
+        socketio_emit.socketio_emit_telop_remove_display_none()
+        # テロップ削除
+        socketio_emit.socketio_emit_telop_reset()
 
-        try:
-            # ユーザーの現在のパスワードを取得
-            query = "SELECT password FROM users WHERE id = %s"
-            cursor.execute(query, (user_id,))
-            result = cursor.fetchone()
+        # Flag変更
+        socketio_emit.socketio_emit_flag_enter()
+        # メイン処理再始動
+        socketio.start_background_task(target = ai)
 
-            if not result:
-                error_msg.append("ユーザーが見つかりません。")
-                return render_template('change-password.html', error_msg=error_msg)
+    # 会話を続けない
+    elif not flag_continuation:
+        # テキスト取得
+        outputContent = TextSettings.CONVERSATIONEVENT2
+        # テキスト出力
+        socketio_emit.socketio_emit_output(outputContent)
+        # Animation・音声出力
+        text_To_Audio_Animation.text_To_Audio_Animation(outputContent)
 
-            # 現在のパスワードを検証
-            if not bcrypt.checkpw(current_password.encode('utf-8'), result['password'].encode('utf-8')):
-                error_msg.append("現在のパスワードが正しくありません。")
-                return render_template('change_password.html', error_msg=error_msg)
+        # テキスト削除
+        socketio_emit.socketio_emit_output_reset()
 
-            # 新しいパスワードをハッシュ化
-            hashed_password = bcrypt.hashpw(new_password.encode('utf-8'), bcrypt.gensalt())
+        # テキスト取得
+        telopContent = TextSettings.ENTEREVENT2
+        # テロップ表示
+        socketio_emit.socketio_emit_telop_remove_display_none()
+        # テロップ削除
+        socketio_emit.socketio_emit_telop(telopContent)
 
-            # パスワードを更新
-            update_query = "UPDATE users SET password = %s WHERE id = %s"
-            cursor.execute(update_query, (hashed_password, user_id))
-            conn.commit()
+# App Route (/home)
+@app.route('/home/')
+def main():
+    # home.htmlの表示
+    return render_template('home.html')
 
-            return redirect(url_for('login'))
+# Enterが押されたら
+@socketio.on('enter_starting')
+def handle_enter_event():
+    # Flag変更
+    socketio_emit.socketio_emit_flag_enter()
 
-        except Exception as e:
-            conn.rollback()
-            print(f"エラーが発生しました: {e}")
-            return render_template('change-password.html', error_msg=error_msg)
-        finally:
-            cursor.close()
-            conn.close()
+    # メイン処理始動
+    socketio.start_background_task(target = ai)
 
-    # GETリクエストの場合、フォームを表示
-    return render_template('change-password.html', error_msg=error_msg)
+# Enterが押されたら
+@socketio.on('enter_conversation')
+def handle_enter_event2():
+    # Flag変更
+    socketio_emit.socketio_emit_flag_enter2()
+    global flag_enter2
+    flag_enter2 = True
 
-# ログアウト処理
-@app.route('/user/logout')
-def logout():
-    session.clear()  # セッションをクリア
-    return redirect(url_for('login'))
-
-# レポートページの処理
-@app.route("/report/register", methods=["POST", "GET"])
-def report():
-    form_data = {
-        "responder": "",
-        "about": "",
-        "detail": "",
-        "answer": "",
-        "gpt_log_id": ""
-    }
-
-    if request.method == "GET":
-        try:
-            with db_connection() as conn:
-                with conn.cursor() as cursor:
-                    cursor.execute('''USE holo_to_talk''')
-                    # gpt_talk_log テーブルから id のみ取得
-                    cursor.execute('''SELECT id FROM gpt_talk_log''')
-                    gpt_log_ids = [row[0] for row in cursor.fetchall()]
-        except Exception as e:
-            gpt_log_ids = []
-            print(f"エラーが発生しました: {e}")
-
-        # GETメソッド用のHTMLレンダリング
-        return render_template('report/register.html', form_data=form_data, gpt_log_ids=gpt_log_ids)
-
-    if request.method == "POST":
-        # POSTデータを取得
-        form_data = {
-            "responder": request.form.get("responder", ""),
-            "about": request.form.get("about", ""),
-            "detail": request.form.get("detail", ""),
-            "answer": request.form.get("answer", ""),
-        }
-
-        try:
-            with db_connection() as conn:
-                with conn.cursor() as cursor:
-                    cursor.execute('''USE holo_to_talk''')
-                    # staff_logテーブルにデータを挿入
-                    cursor.execute('''
-                        INSERT INTO staff_log (responder, about, detail, answer)
-                        VALUES (%s, %s, %s, %s)
-                    ''', (
-                        form_data["responder"],
-                        form_data["about"],
-                        form_data["detail"],
-                        form_data["answer"]
-                    ))
-                conn.commit()
-            return redirect(url_for('report_list'))  # 成功ページにリダイレクト
-        except Exception as e:
-            print(f"エラーが発生しました: {e}")
-            return "エラーが発生しました", 500
-
-#レポートリスト表示処理
-@app.route('/report/list', methods=['GET'])
-def report_list():
-    if request.method == "GET":
-        # データベース接続
-        conn = db_connection()
-        cursor = conn.cursor()
-
-        try:
-            # データベースを選択
-            cursor.execute('''USE holo_to_talk''')
-
-            # station_infoテーブルから必要なデータを取得
-            cursor.execute('''SELECT * FROM staff_log''')
-            logs = cursor.fetchall()
-            print(logs)
-
-            # データをHTMLテンプレートに渡す
-            return render_template('./report/list.html', logs=logs)
-
-        except Exception as e:
-            # エラー処理
-            error_message = f"データの取得中にエラーが発生しました: {e}"
-            return render_template('.report/list.html', error_message=error_message)
-
-        finally:
-            # リソースを解放
-            cursor.close()
-            conn.close()
+# Spaceが押されたら
+@socketio.on('space_phone')
+def handle_space_event():
+    # Flag変更
+    socketio_emit.socketio_emit_flag_space()
+    global flag_space
+    flag_space = True
 
 # アプリケーションを実行
 if __name__ == "__main__":
