@@ -35,10 +35,10 @@ body, html {
     left: 50%;
     text-align: center;
     transform-origin: 50% 50%;
-    transform: translate(-50%, -50%) rotateY(180deg);
+    transform: translate(-50%, -50%) rotateX(180deg) rotateY(180deg);
     width: 80vw;
     height: auto;
-    font-size: 50px;
+    font-size: 65px;
     color: rgb(255, 255, 255);
     font-weight: bold;
     z-index: 2;
@@ -72,10 +72,10 @@ body, html {
     left: 50%;
     text-align: center;
     transform-origin: 50% 50%;
-    transform: translate(-50%, -50%) rotateY(180deg);
+    transform: translate(-50%, -50%) rotateX(180deg) rotateY(180deg);
     width: 80vw;
     height: auto;
-    font-size: 50px;
+    font-size: 65px;
     color: rgb(255, 255, 255);
     font-weight: bold;
     z-index: 1;
@@ -84,14 +84,14 @@ body, html {
 /* カウントダウン（テキスト） */
 #countdown {
     position: absolute;
-    top: 90%;
+    top: 95%;
     left: 50%;
     text-align: center;
     transform-origin: 50% 50%;
-    transform: translate(-50%, -50%) rotateY(180deg);
+    transform: translate(-50%, -50%) rotateX(180deg) rotateY(180deg);
     width: 56vw;
     height: auto;
-    font-size: 35px;
+    font-size: 45px;
     color: rgb(255, 255, 255);
     font-weight: bold;
     z-index: 1;
