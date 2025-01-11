@@ -68,9 +68,7 @@ class ChatGPTAPIOutputSettings:
 # phoneAutomation.py
 class PhoneAutomationSettings:
     # URL
-    URL = "https://holog.net"
-    # URL（開発）
-    # URL = "https://num-0145.holog.net"
+    URL = "https://num-0145.holog.net"
     # 代表電話番号
     PHONE_NUMBER = "+1 8302242800"
     # Driver Wait Time
