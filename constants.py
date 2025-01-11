@@ -35,7 +35,7 @@ class VoiceRecordingSettings:
     # 出力ファイル名
     OUTPUT_FILE = "inputText.wav"
     # 無音判定の閾値
-    THRESHOLD = 500
+    THRESHOLD = 150
     # 録音終了秒数
     SILENCE_DURATION = 3
 
@@ -47,7 +47,7 @@ class AudioToTextSettings:
 # qr_code_found.py
 class QRCodeFoundSettings:
     # 特定単語
-    SEARCH_LIST = ['QRCode', 'QRコード', 'qrCode', 'qrコード', 'QR Code', 'QR コード', 'qr Code', 'qr コード']
+    SEARCH_LIST = ['QRCode', 'QRcode', 'QRコード', 'qrCode', 'qrcode', 'qrコード', 'QR Code', 'QR code', 'QR コード', 'qr Code', 'qr code', 'qr コード']
 
 # text_To_Audio.py
 class TextToAudioSettings:
@@ -59,11 +59,11 @@ class TextToAudioSettings:
 # chatGPT_API_Output.py
 class ChatGPTAPIOutputSettings:
     # モデル
-    MODEL = "gpt-3.5-turbo"
+    MODEL = "gpt-4o"
     # トークン
     MAX_TOKENS = 100
     # プロンプト
-    CHATGPT_SYSTEM_CONTENT = "日本語で対応してください"
+    CHATGPT_SYSTEM_CONTENT = f"日本語で対応してください。{MAX_TOKENS}token以内で綺麗に回答してください。"
 
 # phoneAutomation.py
 class PhoneAutomationSettings:
