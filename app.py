@@ -102,6 +102,14 @@ def index():
         return render_template('index.html')
     return redirect('/station/login')
 
+# ai
+# App Route (/home)
+@app.route('/home/')
+def main():
+    # home.htmlの表示
+    return render_template('home.html')
+# /ai
+
 # エラーメッセージの取得
 ERROR_MSG = TextSettings.ERROR_MSG
 
@@ -113,7 +121,7 @@ def login():
     if request.method == 'GET':
         # 日本語コメント: ユーザーが既にログインしている場合はトップページにリダイレクト
         if 'user' in session:
-            return redirect("/")
+            return redirect("/home")
         else:
             return render_template('./station/login.html', error_msg=error_msg)
 
@@ -158,7 +166,7 @@ def login():
                         "phone_num": twilio_config[3]
                     }
 
-                return redirect('/')
+                return redirect('/home')
             else:
                 error_msg = ERROR_MSG
         else:
@@ -372,12 +380,6 @@ def ai():
         socketio_emit.socketio_emit_telop_remove_display_none()
         # テロップ削除
         socketio_emit.socketio_emit_telop(telopContent)
-
-# App Route (/home)
-@app.route('/home/')
-def main():
-    # home.htmlの表示
-    return render_template('home.html')
 
 # Enterが押されたら
 @socketio.on('enter_starting')
