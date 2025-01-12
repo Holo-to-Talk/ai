@@ -35,7 +35,7 @@ class VoiceRecordingSettings:
     # 出力ファイル名
     OUTPUT_FILE = "inputText.wav"
     # 無音判定の閾値
-    THRESHOLD = 150
+    THRESHOLD = 500
     # 録音終了秒数
     SILENCE_DURATION = 3
 

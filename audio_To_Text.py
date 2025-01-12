@@ -35,7 +35,7 @@ def audio_To_Text(savedDirectory):
         #inputContent = ""
 
         # 開発用（質問内容の確認）
-        #print(inputContent)
+        print(inputContent)
 
         # テキスト返し
         return inputContent

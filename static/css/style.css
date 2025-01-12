@@ -36,7 +36,7 @@ body, html {
     text-align: center;
     transform-origin: 50% 50%;
     transform: translate(-50%, -50%) rotateY(180deg);
-    width: 95vw;
+    width: 98vw;
     height: auto;
     font-size: 65px;
     color: rgb(255, 255, 255);
