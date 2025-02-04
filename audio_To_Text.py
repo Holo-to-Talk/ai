@@ -32,10 +32,10 @@ def audio_To_Text(savedDirectory):
         socketio_emit.socketio_emit_input(inputContent)
 
         # 開発用（質問内容の固定）
-        #inputContent = ""
+        # inputContent = ""
 
         # 開発用（質問内容の確認）
-        #print(inputContent)
+        print(inputContent)
 
         # テキスト返し
         return inputContent

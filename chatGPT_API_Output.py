@@ -12,10 +12,22 @@ def chatGPT_API_Output(conversation_history, inputContent):
     API_KEY = os.getenv("OPENAI_API_KEY")
     openai.api_key = API_KEY
 
-    # モデル取得
+    # モデル名取得
     MODEL = ChatGPTAPIOutputSettings.MODEL
 
-    # トークン取得
+    # ランダム性の制御の取得
+    TEMPERATURE = ChatGPTAPIOutputSettings.TEMPERATURE
+
+    # 生成される単語の確率の制御の取得
+    TOP_P = ChatGPTAPIOutputSettings.TOP_P
+
+    # 新しいアイデアやトピックの制御の取得
+    PRESENCE_PENALTY = ChatGPTAPIOutputSettings.PRESENCE_PENALTY
+
+    # 同じ単語やフレーズを減らす制御の取得
+    FREQUENCY_PENALTY = ChatGPTAPIOutputSettings.FREQUENCY_PENALTY
+
+    # トークン最大値取得
     MAX_TOKENS = ChatGPTAPIOutputSettings.MAX_TOKENS
 
     # プロンプト取得
@@ -35,6 +47,18 @@ def chatGPT_API_Output(conversation_history, inputContent):
         ]
 
     response = openai.ChatCompletion.create(
+        # ランダム性
+        temperature = TEMPERATURE,
+
+        # 生成される単語の確率
+        top_p = TOP_P,
+
+        # 新しいアイデアやトピック
+        presence_penalty = PRESENCE_PENALTY,
+
+        # 同じ単語やフレーズ
+        frequency_penalty = FREQUENCY_PENALTY,
+
         # モデル
         model = MODEL,
 
@@ -43,13 +67,16 @@ def chatGPT_API_Output(conversation_history, inputContent):
 
         # トークン
         max_tokens = MAX_TOKENS,
-
-        # 創造性
-        temperature = 0.7,
     )
 
     # テキスト取得
     outputContent = response['choices'][0]['message']['content']
+
+    # 開発用（回答内容の固定）
+    # outputContent = ""
+
+    # 開発用（回答内容の表示）
+    print(outputContent)
 
     # テキスト返し
     return outputContent

@@ -35,7 +35,7 @@ class VoiceRecordingSettings:
     # 出力ファイル名
     OUTPUT_FILE = "inputText.wav"
     # 無音判定の閾値
-    THRESHOLD = 150
+    THRESHOLD = 500
     # 録音終了秒数
     SILENCE_DURATION = 3
 
@@ -60,17 +60,23 @@ class TextToAudioSettings:
 class ChatGPTAPIOutputSettings:
     # モデル
     MODEL = "gpt-4o"
+    # 出力のランダム性
+    TEMPERATURE = 0.9
+    # 生成される単語の確率
+    TOP_P = 0.95
+    # 新しいアイデアやトピック
+    PRESENCE_PENALTY = 0.7
+    # 同じ単語やフレーズを減らす
+    FREQUENCY_PENALTY = 0
     # トークン
-    MAX_TOKENS = 100
+    MAX_TOKENS = 80
     # プロンプト
-    CHATGPT_SYSTEM_CONTENT = f"日本語で対応してください。{MAX_TOKENS}token以内で綺麗に回答してください。"
+    CHATGPT_SYSTEM_CONTENT = f"質問された言語で対応してください。{MAX_TOKENS}token以内で綺麗に回答してください。"
 
 # phoneAutomation.py
 class PhoneAutomationSettings:
     # URL
-    URL = "https://holog.net"
-    # URL（開発）
-    # URL = "https://num-0145.holog.net"
+    URL = "https://num-0145.holog.net"
     # 代表電話番号
     PHONE_NUMBER = "+1 8302242800"
     # Driver Wait Time
