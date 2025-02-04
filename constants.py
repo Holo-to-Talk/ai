@@ -71,7 +71,7 @@ class ChatGPTAPIOutputSettings:
     # トークン
     MAX_TOKENS = 80
     # プロンプト
-    CHATGPT_SYSTEM_CONTENT = f"日本語で対応してください。{MAX_TOKENS}token以内で綺麗に回答してください。"
+    CHATGPT_SYSTEM_CONTENT = f"質問された言語で対応してください。{MAX_TOKENS}token以内で綺麗に回答してください。"
 
 # phoneAutomation.py
 class PhoneAutomationSettings:
